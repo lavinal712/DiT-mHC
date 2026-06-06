@@ -6,6 +6,8 @@
 | B/4 (mHC num_stream=2)  | 400K        | 68.58     | 13.62     | 20.33           | 0.35      | 0.55     | 42   |
 | B/4 (mHC num_stream=4)  | 400K        | **65.48** | **12.89** | **21.40**       | **0.37**  | **0.56** | 42   |
 
+mHC implementation is based on [lucidrains/hyper-connections](https://github.com/lucidrains/hyper-connections).
+
 ## Scalable Diffusion Models with Transformers (DiT)<br><sub>Official PyTorch Implementation</sub>
 
 ### [Paper](http://arxiv.org/abs/2212.09748) | [Project Page](https://www.wpeebles.com/DiT) | Run DiT-XL/2 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/wpeebles/DiT) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/facebookresearch/DiT/blob/main/run_DiT.ipynb) <a href="https://replicate.com/arielreplicate/scalable_diffusion_with_transformers"><img src="https://replicate.com/arielreplicate/scalable_diffusion_with_transformers/badge"></a>
