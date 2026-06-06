@@ -13,7 +13,7 @@ For a simple single-GPU/CPU sampling script, see sample.py.
 """
 import torch
 import torch.distributed as dist
-from models import DiT_models
+from models_mhc import DiT_mHC_models
 from download import find_model
 from diffusion import create_diffusion
 from diffusers.models import AutoencoderKL
@@ -66,9 +66,11 @@ def main(args):
 
     # Load model:
     latent_size = args.image_size // 8
-    model = DiT_models[args.model](
+    model = DiT_mHC_models[args.model](
         input_size=latent_size,
-        num_classes=args.num_classes
+        num_classes=args.num_classes,
+        num_streams=args.num_streams,
+        sinkhorn_iters=args.sinkhorn_iters,
     ).to(device)
     # Auto-download a pre-trained model or load a custom DiT checkpoint from train.py:
     ckpt_path = args.ckpt or f"DiT-XL-2-{args.image_size}x{args.image_size}.pt"
@@ -151,7 +153,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, choices=list(DiT_models.keys()), default="DiT-XL/2")
+    parser.add_argument("--model", type=str, choices=list(DiT_mHC_models.keys()), default="DiT-XL/2")
     parser.add_argument("--vae",  type=str, choices=["ema", "mse"], default="ema")
     parser.add_argument("--vae-path", type=str, default=None)
     parser.add_argument("--sample-dir", type=str, default="samples")
@@ -166,5 +168,7 @@ if __name__ == "__main__":
                         help="By default, use TF32 matmuls. This massively accelerates sampling on Ampere GPUs.")
     parser.add_argument("--ckpt", type=str, default=None,
                         help="Optional path to a DiT checkpoint (default: auto-download a pre-trained DiT-XL/2 model).")
+    parser.add_argument("--num-streams", type=int, default=4)
+    parser.add_argument("--sinkhorn-iters", type=int, default=20)
     args = parser.parse_args()
     main(args)

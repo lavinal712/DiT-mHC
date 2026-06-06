@@ -28,7 +28,7 @@ import logging
 import os
 from accelerate import Accelerator
 
-from models import DiT_models
+from models_mhc import DiT_mHC_models
 from diffusion import create_diffusion
 from diffusers.models import AutoencoderKL
 
@@ -144,9 +144,11 @@ def main(args):
     # Create model:
     assert args.image_size % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)."
     latent_size = args.image_size // 8
-    model = DiT_models[args.model](
+    model = DiT_mHC_models[args.model](
         input_size=latent_size,
-        num_classes=args.num_classes
+        num_classes=args.num_classes,
+        num_streams=args.num_streams,
+        sinkhorn_iters=args.sinkhorn_iters,
     )
     # Note that parameter initialization is done within the DiT constructor
     model = model.to(device)
@@ -158,7 +160,7 @@ def main(args):
     else:
         vae = AutoencoderKL.from_pretrained(f"stabilityai/sd-vae-ft-{args.vae}").to(device)
     if accelerator.is_main_process:
-        logger.info(f"DiT Parameters: {sum(p.numel() for p in model.parameters()):,}")
+        logger.info(f"DiT-mHC Parameters: {sum(p.numel() for p in model.parameters()):,}")
 
     # Setup optimizer (we used default Adam betas=(0.9, 0.999) and a constant learning rate of 1e-4 in our paper):
     opt = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=0)
@@ -256,7 +258,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--feature-path", type=str, default="features")
     parser.add_argument("--results-dir", type=str, default="results")
-    parser.add_argument("--model", type=str, choices=list(DiT_models.keys()), default="DiT-XL/2")
+    parser.add_argument("--model", type=str, choices=list(DiT_mHC_models.keys()), default="DiT-mHC-XL/2")
     parser.add_argument("--image-size", type=int, choices=[256, 512], default=256)
     parser.add_argument("--num-classes", type=int, default=1000)
     parser.add_argument("--epochs", type=int, default=1400)
@@ -267,5 +269,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--log-every", type=int, default=100)
     parser.add_argument("--ckpt-every", type=int, default=50_000)
+    parser.add_argument("--num-streams", type=int, default=4)
+    parser.add_argument("--sinkhorn-iters", type=int, default=20)
     args = parser.parse_args()
     main(args)

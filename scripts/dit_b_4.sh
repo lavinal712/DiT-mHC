@@ -1,0 +1,14 @@
+accelerate launch --multi_gpu --num_processes 4 --mixed_precision bf16 train.py \
+    --model DiT-B/4 \
+    --feature-path /data/hongyq/data/fast-DiT/features \
+    --results-dir ./results/dit_b_4 \
+    --image-size 256 \
+    --num-classes 1000 \
+    --epochs 80 \
+    --global-batch-size 256 \
+    --global-seed 42 \
+    --vae mse \
+    --vae-path /aiarena/group/gmgroup/hongyq/models/stabilityai/sd-vae-ft-mse \
+    --num-workers 64 \
+    --log-every 100 \
+    --ckpt-every 50000
