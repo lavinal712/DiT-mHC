@@ -1,11 +1,11 @@
 torchrun --nproc_per_node=4 --master_port 29500 sample_ddp_mhc.py \
     --model DiT-mHC-B/4 \
     --vae mse \
-    --vae-path /aiarena/group/gmgroup/hongyq/models/stabilityai/sd-vae-ft-mse \
+    --vae-path stabilityai/sd-vae-ft-mse \
     --sample-dir ./samples \
     --per-proc-batch-size 64 \
     --image-size 256 \
-    --ckpt /aiarena/gpfs/DiT-mHC/results/dit_mhc_b_4_s_4/000-DiT-mHC-B-4/checkpoints/0400000.pt \
+    --ckpt ./results/dit_mhc_b_4_s_4/000-DiT-mHC-B-4/checkpoints/0400000.pt \
     --num-classes 1000 \
     --cfg-scale 1.0 \
     --global-seed 42 \
